@@ -14,7 +14,7 @@ contract EscrowTest is Test {
   function testFund() external {
     vm.deal(address(this), 100 ether); 
     escrow.fund{value: 20 ether}(); 
-    assertEq(escrow.getFundedBalance(), 20 ether); 
+    assertEq(escrow.getFundedBalance(address(this)), 20 ether); 
   }
   function testPrankFund() external {
     vm.deal(arbiter, 2 ether); 
@@ -27,7 +27,7 @@ contract EscrowTest is Test {
     escrow.fund{value: 3 ether}(); 
     vm.prank(arbiter); 
     escrow.approve(); 
-    uint256 currentUserBalance = escrow.getFundedBalance(); 
+    uint256 currentUserBalance = escrow.getFundedBalance(address(this)); 
     assertEq(currentUserBalance, 3 ether); 
   }
   function testPrankApproveFunction() external {
@@ -39,16 +39,12 @@ contract EscrowTest is Test {
     escrow.approve(); 
     vm.stopPrank(); 
   }
-  function testDepositor() external {
-    address currentDepositor = escrow.getDepositor(); 
-    assertEq(currentDepositor, address(this)); 
-  }
-  function testArbiter() external {
-    address currentArbiter = escrow.getArbiter(); 
+  function testArbiter() external view {
+    (address currentArbiter, ) = escrow.agreement(address(this)); 
     assertEq(arbiter, currentArbiter); 
   }
-  function testBeneficiary() external {
-    address currentBeneficiary = escrow.getBeneficiary(); 
+  function testBeneficiary() external view {
+    (, address currentBeneficiary) = escrow.agreement(address(this)); 
     assertEq(beneficiary, currentBeneficiary); 
   }
 }

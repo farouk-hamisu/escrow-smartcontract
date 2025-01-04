@@ -19,7 +19,7 @@ contract EscrowIntegration is Test {
     vm.startPrank(depositor); 
     escrow.makeAgreement(beneficiary,arbiter); 
     escrow.fund{value: 80 ether}(); 
-    uint256 amount = escrow.getFundedBalance(); 
+    uint256 amount = escrow.getFundedBalance(depositor); 
     assertEq(amount, 80 ether); 
     vm.expectRevert(); 
     escrow.approve(); 
