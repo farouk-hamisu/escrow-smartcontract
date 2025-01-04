@@ -44,13 +44,11 @@ contract EscrowTest is Test {
     }
 
     function testApprove() external {
-        address _depositor = makeAddr("depositor"); 
         vm.deal(depositor, 100 ether);
         vm.startPrank(depositor);
         address _beneficiary = makeAddr("beneficiary"); 
         address _arbiter = makeAddr("arbiter"); 
         escrow.makeAgreement(_beneficiary, _arbiter,50 ether);
-        Escrow.PartiesInvolved[] memory agreement = escrow.getAgreements(_depositor); 
         escrow.fund{value: 50 ether}(0, depositor);
         vm.stopPrank();
         vm.startPrank(_arbiter);

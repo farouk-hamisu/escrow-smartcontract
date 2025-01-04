@@ -1,6 +1,5 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
-
 import {console} from "forge-std/Test.sol";
 
 contract Escrow {
@@ -35,19 +34,11 @@ contract Escrow {
       }
       _; 
     }
-    modifier onlyArbiter(address depositor) {
-        bool isArbiter; 
-        console.log("checking for arbiter"); 
-        for (uint i = 0; i < agreement[depositor].length; i++) {
-            if (agreement[depositor][i].arbiter == msg.sender) {
-                isArbiter = true;
-                break;
-            }
-        }
-        if (!isArbiter) {
-            revert onlyArbiterCanApprovePayment();
-        }
-        _;
+    modifier onlyArbiter(uint256 agreementIndex, address depositor) {
+      if(agreement[depositor][agreementIndex].arbiter != msg.sender){
+        revert onlyArbiterCanApprovePayment(); 
+      }
+          _;
     }
     modifier onlyDepositor() {
         if (agreement[msg.sender].length == 0) {
@@ -70,14 +61,11 @@ contract Escrow {
         emit Agreement(msg.sender, _beneficiary, _arbiter);
     }
     // Arbiter approves and sends funds to the beneficiary based on agreement index
-    function approve(uint256 agreementIndex, address depositor) external onlyArbiter(depositor) {
+    function approve(uint256 agreementIndex, address depositor) external onlyArbiter(agreementIndex, depositor) {
         require(agreementIndex < agreement[depositor].length, "Invalid agreement index");
-
         address _beneficiary = agreement[depositor][agreementIndex].beneficiary;
-        uint256 fundedAmount = getFundedBalance(depositor);
         uint256 agreedAmount = agreement[depositor][agreementIndex].agreedAmount; 
         (bool success, ) = payable(_beneficiary).call{value: agreedAmount}("");
-        console.log(address(_beneficiary).balance); 
         if (!success) {
             revert transactionFailed();
         }
@@ -85,10 +73,11 @@ contract Escrow {
         emit Approve(msg.sender, agreedAmount);
     }
     // Refund function
-    function refund(uint256 agreementIndex, address depositor) external onlyArbiter(depositor) {
+    function refund(uint256 agreementIndex, address depositor) external onlyArbiter(agreementIndex, depositor) {
         uint256 fundedAmount = getFundedBalance(depositor);
         uint256 agreedAmount = agreement[depositor][agreementIndex].agreedAmount; 
         require(agreedAmount > 0, "amount cannot be zero"); 
+        require(agreedAmount >= fundedAmount, "balance is too low"); 
         (bool success, ) = payable(depositor).call{value: agreedAmount}("");
         if (!success) {
             revert transactionFailed();
@@ -109,6 +98,5 @@ contract Escrow {
     function getAgreements(address depositor) external view returns (PartiesInvolved[] memory) {
     return agreement[depositor];
 }
-
 }
 
