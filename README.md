@@ -17,20 +17,68 @@ A secure and trustless three-party escrow system on Ethereum. It ensures funds a
 ## Tech Stack  
 - **Solidity**: Smart contract language.  
 
-## Smart Contract Details  
-- **Payable Functions**:  
-  - `fund`: Buyer deposits Ether into the contract.  
-  - `approveRelease`: Arbiter approves the release of funds.  
-  - `releaseFunds`: Transfers Ether to the seller when approved.  
-- **Roles**:  
-  - **Buyer**: Deposits funds.  
-  - **Seller**: Receives funds upon approval.  
-  - **Arbiter**: Mediates and approves the transaction.  
+## How to Use
 
-## Installation  
+### Prerequisites
 
-1. Clone the repository and setup with foundryup:  
+- Install [Foundry](https://getfoundry.sh/) for smart contract development.
+- Have a supported Ethereum wallet (e.g., MetaMask).
+- Access to an Ethereum testnet like Sepolia.
+
+### Setup
+
+1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/escrow-smart-contract.git  
-   cd escrow-smart-contract  
+   git clone <repository_url>
+   cd <repository_name>
+
+## Usage
+
+### Build
+
+```shell
+$ forge build
+```
+
+### Test
+
+```shell
+$ forge test
+```
+
+### Format
+
+```shell
+$ forge fmt
+```
+
+### Gas Snapshots
+
+```shell
+$ forge snapshot
+```
+
+### Anvil
+
+```shell
+$ anvil
+```
+
+### Deploy
+
+```shell
+$ forge script script/DeployEscrow.s.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
+```
+
+### Cast
+
+```shell
+$ cast <subcommand>
+```
+### Help
+```shell
+$ forge --help
+$ anvil --help
+$ cast --help
+```
 
